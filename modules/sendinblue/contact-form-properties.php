@@ -49,6 +49,9 @@ function wpcf7_sendinblue_save_contact_form( $contact_form, $args, $context ) {
 			'contact_lists' => array(),
 			'enable_transactional_email' => false,
 			'email_template' => 0,
+			'enable_deal' => false,
+			'enable_task' => false,
+			'tasktype' => 0,
 		)
 	);
 
@@ -87,6 +90,9 @@ function wpcf7_sendinblue_editor_panels( $panels ) {
 			'contact_lists' => array(),
 			'enable_transactional_email' => false,
 			'email_template' => 0,
+			'enable_deal' => false,
+			'enable_task' => false,
+			'tasktype' => 0,
 		)
 	);
 
@@ -104,6 +110,7 @@ function wpcf7_sendinblue_editor_panels( $panels ) {
 
 		$lists = $service->get_lists();
 		$templates = $service->get_templates();
+		$tasktypes = $service->get_tasktypes();
 
 ?>
 <h2><?php echo esc_html( __( 'Brevo (formerly Sendinblue)', 'contact-form-7' ) ); ?></h2>
@@ -282,6 +289,111 @@ function wpcf7_sendinblue_editor_panels( $panels ) {
 			esc_html( __( 'Manage your email templates', 'contact-form-7' ) ),
 			esc_html( __( '(opens in a new tab)', 'contact-form-7' ) )
 		);
+
+		echo esc_html( __( 'Enable Deal', 'contact-form-7' ) );
+
+		?>
+				</th>
+				<td>
+					<fieldset>
+						<legend class="screen-reader-text">
+		<?php
+
+		echo esc_html( __( 'Enable Deal', 'contact-form-7' ) );
+
+		?>
+						</legend>
+						<label for="wpcf7-sendinblue-enable-deal">
+							<input type="checkbox" name="wpcf7-sendinblue[enable_deal]" id="wpcf7-sendinblue-enable-deal" value="1" <?php checked( $prop['enable_deal'] ); ?> />
+		<?php
+
+		echo esc_html(
+			__( "Add a new deal for the userform", 'contact-form-7' )
+		);
+
+		?>
+						</label>
+					</fieldset>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"></th>
+				<td>
+					<fieldset>
+		<?php
+
+
+		echo esc_html( __( 'Enable Task', 'contact-form-7' ) );
+
+		?>
+				</th>
+				<td>
+					<fieldset>
+						<legend class="screen-reader-text">
+		<?php
+
+		echo esc_html( __( 'Enable Task', 'contact-form-7' ) );
+
+		?>
+						</legend>
+						<label for="wpcf7-sendinblue-enable-task">
+							<input type="checkbox" name="wpcf7-sendinblue[enable_task]" id="wpcf7-sendinblue-enable-task" value="1" <?php checked( $prop['enable_task'] ); ?> />
+		<?php
+
+		echo esc_html(
+			__( "Add a task for new deal", 'contact-form-7' )
+		);
+
+		?>
+						</label>
+					</fieldset>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"></th>
+				<td>
+					<fieldset>
+		<?php
+
+		if ( $tasktypes ) {
+			echo sprintf(
+				'<legend>%1$s</legend>',
+				esc_html( __( 'Select an email template:', 'contact-form-7' ) )
+			);
+
+			echo '<select name="wpcf7-sendinblue[tasktype]">';
+
+			echo sprintf(
+				'<option %1$s>%2$s</option>',
+				wpcf7_format_atts( array(
+					'value' => 0,
+					'selected' => 0 === $prop['tasktype'],
+				) ),
+				esc_html( __( '&mdash; Select &mdash;', 'contact-form-7' ) )
+			);
+
+			foreach ( $tasktypes as $tasktype ) {
+				echo sprintf(
+					'<option %1$s>%2$s</option>',
+					wpcf7_format_atts( array(
+						'value' => $tasktype['id'],
+						'selected' => $prop['tasktype'] === $tasktype['id'],
+					) ),
+					esc_html( $tasktype['name'] )
+				);
+			}
+
+			echo '</select>';
+		} else {
+			echo sprintf(
+				'<legend>%1$s</legend>',
+				esc_html( __( 'Error loading task types.', 'contact-form-7' ) )
+			);
+		}
+
+		?>
+					</fieldset>
+		<?php
 
 		?>
 				</td>

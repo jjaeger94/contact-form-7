@@ -73,6 +73,9 @@ function wpcf7_sendinblue_submit( $contact_form, $result ) {
 			'contact_lists' => array(),
 			'enable_transactional_email' => false,
 			'email_template' => 0,
+			'enable_deal' => false,
+			'enable_task' => false,
+			'tasktype' => 0,
 		)
 	);
 
@@ -85,6 +88,8 @@ function wpcf7_sendinblue_submit( $contact_form, $result ) {
 	$params = array(
 		'contact' => array(),
 		'email' => array(),
+		'deal' => array(),
+		'task' => array(),
 	);
 
 	if ( ! empty( $attributes['EMAIL'] ) or ! empty( $attributes['SMS'] ) ) {
@@ -157,6 +162,34 @@ function wpcf7_sendinblue_submit( $contact_form, $result ) {
 
 		if ( $contact_id and ! empty( $params['email'] ) ) {
 			$service->send_email( $params['email'] );
+		}
+
+		if ($contact_id and $prop['enable_deal'] )) {
+			$params['deal'] = array(
+				'name' => $attributes['SIZE'].' '.$attributes['EMAIL'],
+				'attributes' => array(
+					'sharepoint' => 'dummy URL', 
+					'nachricht' => $attributes['MESSAGE'],
+				),
+			);
+			$deal_id = $service->create_deal( $params['deal'] );
+			if($deal_id){
+				$link = array(
+					'linkContactIds' => [$contact_id],
+				);
+				$service->link_deal( $deal_id, $link );
+			}
+		}
+
+		if ($contact_id and $deal_id and $prop['enable_task'] and $prop['tasktype'] )) {
+			$params['task'] = array(
+				'name' => 'Anfrage '.$attributes['EMAIL'].' sichten',
+				'taskTypeId' => absint( $prop['tasktype'] ),
+				'contactsIds' => [$contact_id],
+				'dealsIds' => [$deal_id],
+				'date' => date("Y-m-d\TH:i:s.000\Z"),
+			);
+			$task_id = $service->create_task( $params['task'] );
 		}
 	}
 }
