@@ -164,7 +164,7 @@ function wpcf7_sendinblue_submit( $contact_form, $result ) {
 			$service->send_email( $params['email'] );
 		}
 
-		if ($contact_id and $prop['enable_deal'] )) {
+		if ($contact_id and $prop['enable_deal'] ) {
 			$params['deal'] = array(
 				'name' => $attributes['SIZE'].' '.$attributes['EMAIL'],
 				'attributes' => array(
