@@ -203,125 +203,39 @@ function wpcf7_sendinblue_editor_panels( $panels ) {
 		?>
 				</td>
 			</tr>
-			<tr class="<?php echo $prop['enable_transactional_email'] ? '' : 'inactive'; ?>">
+			<tr>
+			<th scope="row">
+		<?php
+
+		echo esc_html( __( 'Enable Deal', 'contact-form-7' ) );
+
+		?>
+				</th>
+				<td>
+					<fieldset>
+						<legend class="screen-reader-text">
+		<?php
+
+		echo esc_html( __( 'Enable Deal', 'contact-form-7' ) );
+
+		?>
+			</legend>
+			<label for="wpcf7-sendinblue-enable-deal">
+				<input type="checkbox" name="wpcf7-sendinblue[enable_deal]" id="wpcf7-sendinblue-enable-deal" value="1" <?php checked( $prop['enable_deal'] ); ?> />
+		<?php
+
+		echo esc_html(
+			__( "Add a new deal", 'contact-form-7' )
+		);
+
+		?>
+						</label>
+					</fieldset>
+				</td>
+			</tr>
+			<tr>
 				<th scope="row">
 		<?php
-
-		echo esc_html( __( 'Welcome email', 'contact-form-7' ) );
-
-		?>
-				</th>
-				<td>
-					<fieldset>
-						<legend class="screen-reader-text">
-		<?php
-
-		echo esc_html( __( 'Welcome email', 'contact-form-7' ) );
-
-		?>
-						</legend>
-						<label for="wpcf7-sendinblue-enable-transactional-email">
-							<input type="checkbox" name="wpcf7-sendinblue[enable_transactional_email]" id="wpcf7-sendinblue-enable-transactional-email" value="1" <?php checked( $prop['enable_transactional_email'] ); ?> />
-		<?php
-
-		echo esc_html(
-			__( "Send a welcome email to new contacts", 'contact-form-7' )
-		);
-
-		?>
-						</label>
-					</fieldset>
-				</td>
-			</tr>
-			<tr>
-				<th scope="row"></th>
-				<td>
-					<fieldset>
-		<?php
-
-		if ( $templates ) {
-			echo sprintf(
-				'<legend>%1$s</legend>',
-				esc_html( __( 'Select an email template:', 'contact-form-7' ) )
-			);
-
-			echo '<select name="wpcf7-sendinblue[email_template]">';
-
-			echo sprintf(
-				'<option %1$s>%2$s</option>',
-				wpcf7_format_atts( array(
-					'value' => 0,
-					'selected' => 0 === $prop['email_template'],
-				) ),
-				esc_html( __( '&mdash; Select &mdash;', 'contact-form-7' ) )
-			);
-
-			foreach ( $templates as $template ) {
-				echo sprintf(
-					'<option %1$s>%2$s</option>',
-					wpcf7_format_atts( array(
-						'value' => $template['id'],
-						'selected' => $prop['email_template'] === $template['id'],
-					) ),
-					esc_html( $template['name'] )
-				);
-			}
-
-			echo '</select>';
-		} else {
-			echo sprintf(
-				'<legend>%1$s</legend>',
-				esc_html( __( 'You have no active email template yet.', 'contact-form-7' ) )
-			);
-		}
-
-		?>
-					</fieldset>
-		<?php
-
-		echo sprintf(
-			'<p><a %1$s>%2$s <span class="screen-reader-text">%3$s</span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></p>',
-			wpcf7_format_atts( array(
-				'href' => 'https://my.sendinblue.com/camp/lists/template',
-				'target' => '_blank',
-				'rel' => 'external noreferrer noopener',
-			) ),
-			esc_html( __( 'Manage your email templates', 'contact-form-7' ) ),
-			esc_html( __( '(opens in a new tab)', 'contact-form-7' ) )
-		);
-
-		echo esc_html( __( 'Enable Deal', 'contact-form-7' ) );
-
-		?>
-				</th>
-				<td>
-					<fieldset>
-						<legend class="screen-reader-text">
-		<?php
-
-		echo esc_html( __( 'Enable Deal', 'contact-form-7' ) );
-
-		?>
-						</legend>
-						<label for="wpcf7-sendinblue-enable-deal">
-							<input type="checkbox" name="wpcf7-sendinblue[enable_deal]" id="wpcf7-sendinblue-enable-deal" value="1" <?php checked( $prop['enable_deal'] ); ?> />
-		<?php
-
-		echo esc_html(
-			__( "Add a new deal for the userform", 'contact-form-7' )
-		);
-
-		?>
-						</label>
-					</fieldset>
-				</td>
-			</tr>
-			<tr>
-				<th scope="row"></th>
-				<td>
-					<fieldset>
-		<?php
-
 
 		echo esc_html( __( 'Enable Task', 'contact-form-7' ) );
 
@@ -393,7 +307,77 @@ function wpcf7_sendinblue_editor_panels( $panels ) {
 
 		?>
 					</fieldset>
+					<tr class="<?php echo $prop['enable_transactional_email'] ? '' : 'inactive'; ?>">
+				<th scope="row">
 		<?php
+
+		echo esc_html( __( 'Welcome email', 'contact-form-7' ) );
+
+		?>
+				</th>
+				<td>
+					<fieldset>
+						<legend class="screen-reader-text">
+		<?php
+
+		echo esc_html( __( 'Welcome email', 'contact-form-7' ) );
+
+		?>
+						</legend>
+						<label for="wpcf7-sendinblue-enable-transactional-email">
+							<input type="checkbox" name="wpcf7-sendinblue[enable_transactional_email]" id="wpcf7-sendinblue-enable-transactional-email" value="1" <?php checked( $prop['enable_transactional_email'] ); ?> />
+		<?php
+
+		echo esc_html(
+			__( "Send a welcome email to new contacts", 'contact-form-7' )
+		);
+
+		?>
+						</label>
+					</fieldset>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"></th>
+				<td>
+					<fieldset>
+		<?php
+
+		if ( $templates ) {
+			echo sprintf(
+				'<legend>%1$s</legend>',
+				esc_html( __( 'Select an email template:', 'contact-form-7' ) )
+			);
+
+			echo '<select name="wpcf7-sendinblue[email_template]">';
+
+			echo sprintf(
+				'<option %1$s>%2$s</option>',
+				wpcf7_format_atts( array(
+					'value' => 0,
+					'selected' => 0 === $prop['email_template'],
+				) ),
+				esc_html( __( '&mdash; Select &mdash;', 'contact-form-7' ) )
+			);
+
+			foreach ( $templates as $template ) {
+				echo sprintf(
+					'<option %1$s>%2$s</option>',
+					wpcf7_format_atts( array(
+						'value' => $template['id'],
+						'selected' => $prop['email_template'] === $template['id'],
+					) ),
+					esc_html( $template['name'] )
+				);
+			}
+
+			echo '</select>';
+		} else {
+			echo sprintf(
+				'<legend>%1$s</legend>',
+				esc_html( __( 'You have no active email template yet.', 'contact-form-7' ) )
+			);
+		}
 
 		?>
 				</td>
