@@ -181,7 +181,7 @@ function wpcf7_sendinblue_submit( $contact_form, $result ) {
 			}
 		}
 
-		if ($contact_id and $deal_id and $prop['enable_task'] and $prop['tasktype'] )) {
+		if ($contact_id and $deal_id and $prop['enable_task'] and $prop['tasktype'] ) {
 			$params['task'] = array(
 				'name' => 'Anfrage '.$attributes['EMAIL'].' sichten',
 				'taskTypeId' => absint( $prop['tasktype'] ),
