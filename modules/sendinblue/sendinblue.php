@@ -160,6 +160,8 @@ function wpcf7_sendinblue_submit( $contact_form, $result ) {
 	if ( ! empty( $params['contact'] ) ) {
 		$contact_id = $service->create_contact( $params['contact'] );
 
+		error_log($contact_id);
+
 		if ( $contact_id and ! empty( $params['email'] ) ) {
 			$service->send_email( $params['email'] );
 		}
@@ -178,18 +180,21 @@ function wpcf7_sendinblue_submit( $contact_form, $result ) {
 					'linkContactIds' => [$contact_id],
 				);
 				$service->link_deal( $deal_id, $link );
+				if ($prop['enable_task'] and $prop['tasktype'] ) {
+					$params['task'] = array(
+						'name' => 'Anfrage '.$attributes['EMAIL'].' sichten',
+						'taskTypeId' => absint( $prop['tasktype'] ),
+						'contactsIds' => [$contact_id],
+						'dealsIds' => [$deal_id],
+						'date' => date("Y-m-d\TH:i:s.000\Z"),
+					);
+					$task_id = $service->create_task( $params['task'] );
+				}else{
+					error_log("no enable_task or tasktype ");
+				}
 			}
-		}
-
-		if ($contact_id and $deal_id and $prop['enable_task'] and $prop['tasktype'] ) {
-			$params['task'] = array(
-				'name' => 'Anfrage '.$attributes['EMAIL'].' sichten',
-				'taskTypeId' => absint( $prop['tasktype'] ),
-				'contactsIds' => [$contact_id],
-				'dealsIds' => [$deal_id],
-				'date' => date("Y-m-d\TH:i:s.000\Z"),
-			);
-			$task_id = $service->create_task( $params['task'] );
+		}else{
+			error_log("no enable_deal or contact_id ".$contact_id);
 		}
 	}
 }

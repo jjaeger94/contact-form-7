@@ -227,7 +227,7 @@ trait WPCF7_Sendinblue_API {
 
 
 	public function confirm_key() {
-		$endpoint = 'https://api.sendinblue.com/v3/account';
+		$endpoint = 'https://api.brevo.com/v3/contacts/'.$para;
 
 		$request = array(
 			'headers' => array(
@@ -241,7 +241,7 @@ trait WPCF7_Sendinblue_API {
 		$response_code = (int) wp_remote_retrieve_response_code( $response );
 
 		if ( 200 === $response_code ) { // 200 OK
-			return true;
+			return $response_body['id'];
 		} elseif ( 401 === $response_code ) { // 401 Unauthorized
 			return false;
 		} elseif ( 400 <= $response_code ) {
@@ -251,6 +251,33 @@ trait WPCF7_Sendinblue_API {
 		}
 	}
 
+	public function get_user_id( $properties ) {
+		$endpoint = rawurlencode('https://api.sendinblue.com/v3/account/'.$properties['email']);
+
+		$request = array(
+			'headers' => array(
+				'Accept' => 'application/json',
+				'Content-Type' => 'application/json; charset=utf-8',
+				'API-Key' => $this->get_api_key(),
+			),
+		);
+
+		$response = wp_remote_get( $endpoint, $request );
+		$response_code = (int) wp_remote_retrieve_response_code( $response );
+
+		if ( 200 === $response_code ) { // 200 OK
+			$response_body = wp_remote_retrieve_body( $response );
+			$response_body = json_decode( $response_body, true );
+			return true;
+		} elseif ( 401 === $response_code ) { // 401 Unauthorized
+			return false;
+		} elseif ( 400 <= $response_code ) {
+			if ( WP_DEBUG ) {
+				$this->log( $endpoint, $request, $response );
+			}
+			return false;
+		}
+	}
 
 	public function get_lists() {
 		$endpoint = add_query_arg(
@@ -372,10 +399,11 @@ trait WPCF7_Sendinblue_API {
 
 		$response = wp_remote_post( $endpoint, $request );
 		$response_code = (int) wp_remote_retrieve_response_code( $response );
-
-		if ( in_array( $response_code, array( 201, 204 ), true ) ) {
+		if(201 === $response_code){
 			$contact_id = wp_remote_retrieve_body( $response );
 			return $contact_id;
+		}elseif (204 === $response_code) {
+			return $this->get_user_id( $properties );
 		} elseif ( 400 <= $response_code ) {
 			if ( WP_DEBUG ) {
 				$this->log( $endpoint, $request, $response );
