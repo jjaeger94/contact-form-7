@@ -444,6 +444,7 @@ trait WPCF7_Sendinblue_API {
 		$endpoint = 'https://api.sendinblue.com/v3/crm/deals/link-unlink/'.$deal_id;
 
 		$request = array(
+			'method' => 'PATCH',
 			'headers' => array(
 				'Accept' => 'application/json',
 				'Content-Type' => 'application/json; charset=utf-8',
@@ -452,7 +453,7 @@ trait WPCF7_Sendinblue_API {
 			'body' => json_encode( $properties ),
 		);
 
-		$response = wp_remote_post( $endpoint, $request );
+		$response = wp_remote_request( $endpoint, $request );
 		$response_code = (int) wp_remote_retrieve_response_code( $response );
 
 		if ( 201 === $response_code ) { // 201 Transactional email sent
