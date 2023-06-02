@@ -379,7 +379,7 @@ function wpcf7_sendinblue_editor_panels( $panels ) {
 						'value' => $tasktype['id'],
 						'selected' => $prop['tasktype'] === $tasktype['id'],
 					) ),
-					esc_html( $tasktype['name'] )
+					esc_html( $tasktype['title'] )
 				);
 			}
 
