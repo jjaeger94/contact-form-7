@@ -241,7 +241,7 @@ trait WPCF7_Sendinblue_API {
 		$response_code = (int) wp_remote_retrieve_response_code( $response );
 
 		if ( 200 === $response_code ) { // 200 OK
-			return $response_body['id'];
+			return true;
 		} elseif ( 401 === $response_code ) { // 401 Unauthorized
 			return false;
 		} elseif ( 400 <= $response_code ) {
@@ -268,7 +268,7 @@ trait WPCF7_Sendinblue_API {
 		if ( 200 === $response_code ) { // 200 OK
 			$response_body = wp_remote_retrieve_body( $response );
 			$response_body = json_decode( $response_body, true );
-			return true;
+			return $response_body['id'];
 		} elseif ( 401 === $response_code ) { // 401 Unauthorized
 			return false;
 		} elseif ( 400 <= $response_code ) {
