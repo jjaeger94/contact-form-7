@@ -227,7 +227,7 @@ trait WPCF7_Sendinblue_API {
 
 
 	public function confirm_key() {
-		$endpoint = 'https://api.brevo.com/v3/contacts/'.$para;
+		$endpoint = 'https://api.brevo.com/v3/account';
 
 		$request = array(
 			'headers' => array(
@@ -252,7 +252,7 @@ trait WPCF7_Sendinblue_API {
 	}
 
 	public function get_user_id( $properties ) {
-		$endpoint = rawurlencode('https://api.sendinblue.com/v3/account/'.$properties['email']);
+		$endpoint = 'https://api.sendinblue.com/v3/contacts/'.rawurlencode($properties['email']);
 
 		$request = array(
 			'headers' => array(
@@ -400,8 +400,9 @@ trait WPCF7_Sendinblue_API {
 		$response = wp_remote_post( $endpoint, $request );
 		$response_code = (int) wp_remote_retrieve_response_code( $response );
 		if(201 === $response_code){
-			$contact_id = wp_remote_retrieve_body( $response );
-			return $contact_id;
+			$response_body = wp_remote_retrieve_body( $response );
+			$response_body = json_decode( $response_body, true );
+			return $response_body['id'];
 		}elseif (204 === $response_code) {
 			return $this->get_user_id( $properties );
 		} elseif ( 400 <= $response_code ) {
@@ -455,10 +456,11 @@ trait WPCF7_Sendinblue_API {
 
 		$response = wp_remote_post( $endpoint, $request );
 		$response_code = (int) wp_remote_retrieve_response_code( $response );
-
-		if ( 201 === $response_code ) { // 201 Transactional email sent
-			$deal_id = wp_remote_retrieve_body( $response );
-			return $deal_id;
+		error_log("response_code".$response_code);
+		if ( 200 === $response_code ) {
+			$response_body = wp_remote_retrieve_body( $response );
+			$response_body = json_decode( $response_body, true );
+			return $response_body['id'];
 		} elseif ( 400 <= $response_code ) {
 			if ( WP_DEBUG ) {
 				$this->log( $endpoint, $request, $response );
@@ -484,9 +486,8 @@ trait WPCF7_Sendinblue_API {
 		$response = wp_remote_request( $endpoint, $request );
 		$response_code = (int) wp_remote_retrieve_response_code( $response );
 
-		if ( 201 === $response_code ) { // 201 Transactional email sent
-			$deal_id = wp_remote_retrieve_body( $response );
-			return $deal_id;
+		if ( 200 === $response_code ) {
+			return true;
 		} elseif ( 400 <= $response_code ) {
 			if ( WP_DEBUG ) {
 				$this->log( $endpoint, $request, $response );
@@ -511,9 +512,10 @@ trait WPCF7_Sendinblue_API {
 		$response = wp_remote_post( $endpoint, $request );
 		$response_code = (int) wp_remote_retrieve_response_code( $response );
 
-		if ( 201 === $response_code ) { // 201 Transactional email sent
-			$task_id = wp_remote_retrieve_body( $response );
-			return $task_id;
+		if ( 200 === $response_code ) { // 201 Transactional email sent
+			$response_body = wp_remote_retrieve_body( $response );
+			$response_body = json_decode( $response_body, true );
+			return $response_body['id'];
 		} elseif ( 400 <= $response_code ) {
 			if ( WP_DEBUG ) {
 				$this->log( $endpoint, $request, $response );

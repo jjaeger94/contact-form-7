@@ -160,21 +160,23 @@ function wpcf7_sendinblue_submit( $contact_form, $result ) {
 	if ( ! empty( $params['contact'] ) ) {
 		$contact_id = $service->create_contact( $params['contact'] );
 
-		error_log($contact_id);
-
 		if ( $contact_id and ! empty( $params['email'] ) ) {
 			$service->send_email( $params['email'] );
 		}
 
 		if ($contact_id and $prop['enable_deal'] ) {
+
+
 			$params['deal'] = array(
-				'name' => $attributes['SIZE'].' '.$attributes['EMAIL'],
+				'name' => 'Anfrage '.$attributes['EMAIL'],
 				'attributes' => array(
 					'sharepoint' => 'dummy URL', 
 					'nachricht' => $attributes['MESSAGE'],
+					'gutschein' => $attributes['CODE']
 				),
 			);
 			$deal_id = $service->create_deal( $params['deal'] );
+			error_log("created deal with id ".$deal_id);
 			if($deal_id){
 				$link = array(
 					'linkContactIds' => [$contact_id],
@@ -183,7 +185,7 @@ function wpcf7_sendinblue_submit( $contact_form, $result ) {
 				if ($prop['enable_task'] and $prop['tasktype'] ) {
 					$params['task'] = array(
 						'name' => 'Anfrage '.$attributes['EMAIL'].' sichten',
-						'taskTypeId' => absint( $prop['tasktype'] ),
+						'taskTypeId' => $prop['tasktype'],
 						'contactsIds' => [$contact_id],
 						'dealsIds' => [$deal_id],
 						'date' => date("Y-m-d\TH:i:s.000\Z"),
@@ -192,6 +194,8 @@ function wpcf7_sendinblue_submit( $contact_form, $result ) {
 				}else{
 					error_log("no enable_task or tasktype ");
 				}
+			}else{
+				error_log("no deal id");
 			}
 		}else{
 			error_log("no enable_deal or contact_id ".$contact_id);
