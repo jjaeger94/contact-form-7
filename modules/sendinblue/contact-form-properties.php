@@ -272,7 +272,7 @@ function wpcf7_sendinblue_editor_panels( $panels ) {
 		if ( $tasktypes ) {
 			echo sprintf(
 				'<legend>%1$s</legend>',
-				esc_html( __( 'Select an email template:', 'contact-form-7' ) )
+				esc_html( __( 'Select a task type:', 'contact-form-7' ) )
 			);
 
 			echo '<select name="wpcf7-sendinblue[tasktype]">';
