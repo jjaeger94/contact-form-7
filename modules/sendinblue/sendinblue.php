@@ -165,15 +165,19 @@ function wpcf7_sendinblue_submit( $contact_form, $result ) {
 		}
 
 		if ($contact_id and $prop['enable_deal'] ) {
-
-
+			$deal_attributes = array(
+				'sharepoint' => 'dummy URL', 
+				'format' => $attributes['FORMAT'][0],
+			);
+			if( isset( $attributes['MESSAGE'] ) ){
+				$deal_attributes['nachricht'] = $attributes['MESSAGE'];
+			}
+			if( isset( $attributes['CODE'] ) ){
+				$deal_attributes['gutschein'] = $attributes['CODE'];
+			}
 			$params['deal'] = array(
 				'name' => 'Anfrage '.$attributes['EMAIL'],
-				'attributes' => array(
-					'sharepoint' => 'dummy URL', 
-					'nachricht' => $attributes['MESSAGE'],
-					'gutschein' => $attributes['CODE']
-				),
+				'attributes' => $deal_attributes,
 			);
 			$deal_id = $service->create_deal( $params['deal'] );
 			error_log("created deal with id ".$deal_id);
