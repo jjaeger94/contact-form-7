@@ -36,12 +36,12 @@ function cf7fr_editor_panels_reg ( $panels ) {
 
 function cf7fr_admin_reg_additional_settings( $cf7 )
 {
+
+	$my_attributes = array("email", "firstname", "lastname", "company", "address", "city", "postcode", "country");
 	
 	$post_id = sanitize_text_field($_GET['post']);
 	$tags = $cf7->form_scan_shortcode();
 	$enable = get_post_meta($post_id, "_cf7fr_enable_registration", true);
-	$cf7fru = get_post_meta($post_id, "_cf7fru_", true);
-	$cf7fre = get_post_meta($post_id, "_cf7fre_", true);
 	$cf7frr = get_post_meta($post_id, "_cf7frr_", true);
 	$selectedrole = $cf7frr;
 	if(!$selectedrole)
@@ -64,31 +64,48 @@ function cf7fr_admin_reg_additional_settings( $cf7 )
 
 	$admin_cm_output .= "<br /><table>";
 	
-	$admin_cm_output .= "<tr><td>Selected Field Name For User Name :</td></tr>";
-	$admin_cm_output .= "<tr><td><select name='_cf7fru_'>";
-	$admin_cm_output .= "<option value=''>Select Field</option>";
-	foreach ($tags as $key => $value) {
-		if($cf7fru==$value['name']){$selected='selected=selected';}else{$selected = "";}			
-		$admin_cm_output .= "<option ".$selected." value='".$value['name']."'>".$value['name']."</option>";
-	}
-	$admin_cm_output .= "</select>";
-	$admin_cm_output .= "</td></tr>";
+	// $admin_cm_output .= "<tr><td>Selected Field Name For User Name :</td></tr>";
+	// $admin_cm_output .= "<tr><td><select name='_cf7fru_'>";
+	// $admin_cm_output .= "<option value=''>Select Field</option>";
+	// foreach ($tags as $key => $value) {
+	// 	if($cf7fru==$value['name']){$selected='selected=selected';}else{$selected = "";}			
+	// 	$admin_cm_output .= "<option ".$selected." value='".$value['name']."'>".$value['name']."</option>";
+	// }
+	// $admin_cm_output .= "</select>";
+	// $admin_cm_output .= "</td></tr>";
 
-	$admin_cm_output .= "<tr><td>Selected Field Name For Email :</td></tr>";
-	$admin_cm_output .= "<tr><td><select name='_cf7fre_'>";
-	$admin_cm_output .= "<option value=''>Select Field</option>";
-	foreach ($tags as $key => $value) {
-		if($cf7fre==$value['name']){$selected='selected=selected';}else{$selected = "";}
-		$admin_cm_output .= "<option ".$selected." value='".$value['name']."'>".$value['name']."</option>";
+	// $admin_cm_output .= "<tr><td>Selected Field Name For Email :</td></tr>";
+	// $admin_cm_output .= "<tr><td><select name='_cf7fre_'>";
+	// $admin_cm_output .= "<option value=''>Select Field</option>";
+	// foreach ($tags as $key => $value) {
+	// 	if($cf7fre==$value['name']){$selected='selected=selected';}else{$selected = "";}
+	// 	$admin_cm_output .= "<option ".$selected." value='".$value['name']."'>".$value['name']."</option>";
+	// }
+	// $admin_cm_output .= "</select>";
+	// $admin_cm_output .= "</td></tr><tr><td>";
+	// $admin_cm_output .= "<input type='hidden' name='email' value='2'>";
+	// $admin_cm_output .= "<input type='hidden' name='post' value='$post_id'>";
+	// $admin_cm_output .= "</td></tr>";
+
+	foreach ($my_attributes as $attr) {
+
+		$selected_value = get_post_meta($post_id, $attr, true);
+		
+		$admin_cm_output .= "<tr><td>Selected Field Name For ".$attr." :</td></tr>";
+		$admin_cm_output .= "<tr><td><select name='".$attr."'>";
+		$admin_cm_output .= "<option value=''>Select Field</option>";
+		foreach ($tags as $key => $value) {
+			if($selected_value==$value['name']){$selected='selected=selected';}else{$selected = "";}			
+			$admin_cm_output .= "<option ".$selected." value='".$value['name']."'>".$value['name']."</option>";
+		}
+		$admin_cm_output .= "</select>";
+		$admin_cm_output .= "</td></tr>";
 	}
-	$admin_cm_output .= "</select>";
-	$admin_cm_output .= "</td></tr><tr><td>";
-	$admin_cm_output .= "<input type='hidden' name='email' value='2'>";
-	$admin_cm_output .= "<input type='hidden' name='post' value='$post_id'>";
-	$admin_cm_output .= "</td></tr>";
+
 	$admin_cm_output .= "<tr><td>Selected User Role:</td></tr>";
 	$admin_cm_output .= "<tr><td>";
 	$admin_cm_output .= "<select name='_cf7frr_'>";
+
 	$editable_roles = get_editable_roles();
     foreach ( $editable_roles as $role => $details ) {
      $name = translate_user_role($details['name'] );
@@ -98,6 +115,7 @@ function cf7fr_admin_reg_additional_settings( $cf7 )
              $admin_cm_output .= "<option value='" . esc_attr($role) . "'>$name</option>";
     }
     $admin_cm_output .="</select>";
+	$admin_cm_output .= "<input type='hidden' name='post' value='$post_id'>";
 	$admin_cm_output .= "</td></tr>";
 	$admin_cm_output .="</table>";
 	$admin_cm_output .= "</div>";
@@ -123,13 +141,12 @@ function cf7_save_reg_contact_form( $cf7 ) {
 			update_post_meta($post_id, "_cf7fr_enable_registration", 0);
 		}
 
-		$key = "_cf7fru_";
-		$vals = sanitize_text_field($_POST[$key]);
-		update_post_meta($post_id, $key, $vals);
+		$my_attributes = array("email", "firstname", "lastname", "company", "address", "city", "postcode", "country");
 
-		$key = "_cf7fre_";
-		$vals = sanitize_text_field($_POST[$key]);
-		update_post_meta($post_id, $key, $vals);	
+		foreach ($my_attributes as $attr) {
+			$vals = sanitize_text_field($_POST[$attr]);
+			update_post_meta($post_id, $attr, $vals);	
+		}
 
 		$key = "_cf7frr_";
 		$vals = sanitize_text_field($_POST[$key]);
