@@ -37,7 +37,7 @@ function cf7fr_editor_panels_reg ( $panels ) {
 function cf7fr_admin_reg_additional_settings( $cf7 )
 {
 
-	$my_attributes = array("email", "firstname", "lastname", "company", "address", "city", "postcode", "country");
+	$my_attributes = get_my_attributes();
 	
 	$post_id = sanitize_text_field($_GET['post']);
 	$tags = $cf7->form_scan_shortcode();
@@ -64,29 +64,6 @@ function cf7fr_admin_reg_additional_settings( $cf7 )
 
 	$admin_cm_output .= "<br /><table>";
 	
-	// $admin_cm_output .= "<tr><td>Selected Field Name For User Name :</td></tr>";
-	// $admin_cm_output .= "<tr><td><select name='_cf7fru_'>";
-	// $admin_cm_output .= "<option value=''>Select Field</option>";
-	// foreach ($tags as $key => $value) {
-	// 	if($cf7fru==$value['name']){$selected='selected=selected';}else{$selected = "";}			
-	// 	$admin_cm_output .= "<option ".$selected." value='".$value['name']."'>".$value['name']."</option>";
-	// }
-	// $admin_cm_output .= "</select>";
-	// $admin_cm_output .= "</td></tr>";
-
-	// $admin_cm_output .= "<tr><td>Selected Field Name For Email :</td></tr>";
-	// $admin_cm_output .= "<tr><td><select name='_cf7fre_'>";
-	// $admin_cm_output .= "<option value=''>Select Field</option>";
-	// foreach ($tags as $key => $value) {
-	// 	if($cf7fre==$value['name']){$selected='selected=selected';}else{$selected = "";}
-	// 	$admin_cm_output .= "<option ".$selected." value='".$value['name']."'>".$value['name']."</option>";
-	// }
-	// $admin_cm_output .= "</select>";
-	// $admin_cm_output .= "</td></tr><tr><td>";
-	// $admin_cm_output .= "<input type='hidden' name='email' value='2'>";
-	// $admin_cm_output .= "<input type='hidden' name='post' value='$post_id'>";
-	// $admin_cm_output .= "</td></tr>";
-
 	foreach ($my_attributes as $attr) {
 
 		$selected_value = get_post_meta($post_id, $attr, true);
@@ -141,11 +118,14 @@ function cf7_save_reg_contact_form( $cf7 ) {
 			update_post_meta($post_id, "_cf7fr_enable_registration", 0);
 		}
 
-		$my_attributes = array("email", "firstname", "lastname", "company", "address", "city", "postcode", "country");
+		$my_attributes = get_my_attributes();
 
 		foreach ($my_attributes as $attr) {
-			$vals = sanitize_text_field($_POST[$attr]);
-			update_post_meta($post_id, $attr, $vals);	
+			if(isset($_POST[$attr])){
+				$vals = sanitize_text_field($_POST[$attr]);
+				update_post_meta($post_id, $attr, $vals);	
+			}
+
 		}
 
 		$key = "_cf7frr_";
