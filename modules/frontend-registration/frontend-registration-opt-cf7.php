@@ -10,15 +10,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 function get_my_attributes(){
-    return array("email", "shipping-firstname", "shipping-lastname", "shipping-company", "shipping-address", "shipping-city", "shipping-postcode", "shipping-country", "billing-firstname", "billing-lastname", "billing-company", "billing-address", "billing-city", "billing-postcode", "billing-country", "different-billing");
+    //return attributes for form matching in ui
+    return array("email", "shipping-firstname", "shipping-lastname", "shipping-company", "shipping-address", "shipping-city", "shipping-postcode", "shipping-country", "billing-firstname", "billing-lastname", "billing-company", "billing-address", "billing-city", "billing-postcode", "billing-country", "different-billing", "order");
 }
 
 function create_user_from_registration($cfdata) {
-	//$cmtagobj = new WPCF7_Shortcode( $tag );
 	$post_id = sanitize_text_field($_POST['_wpcf7']);
     $cf7frr = get_post_meta($post_id, "_cf7frr_", true);
 
 	$enable = get_post_meta($post_id,'_cf7fr_enable_registration');
+    //check if enabled for this form
 	if($enable[0]!=0)
 	{
 		    if (!isset($cfdata->posted_data) && class_exists('WPCF7_Submission')) {
@@ -29,7 +30,7 @@ function create_user_from_registration($cfdata) {
 		    } elseif (isset($cfdata->posted_data)) {
 		        $formdata = $cfdata->posted_data;
 		    } 
-        $password = wp_generate_password( 12, false );
+        //$password = wp_generate_password( 12, false ); //uncomment because data is set to order instead of user
 
         $email = $formdata["".get_post_meta($post_id, "email", true).""];
         $shipping_firstname = $formdata["".get_post_meta($post_id, "shipping-firstname", true).""];
@@ -40,6 +41,7 @@ function create_user_from_registration($cfdata) {
         $shipping_postcode = $formdata["".get_post_meta($post_id, "shipping-postcode", true).""];
 
         $different_billing = $formdata[get_post_meta($post_id, "different-billing", true)][0];
+        $order_id = $formdata[get_post_meta($post_id, "order", true)];
 
         $billing_firstname = $formdata["".get_post_meta($post_id, "billing-firstname", true).""];
         $billing_lastname = $formdata["".get_post_meta($post_id, "billing-lastname", true).""];
@@ -48,21 +50,41 @@ function create_user_from_registration($cfdata) {
         $billing_city = $formdata["".get_post_meta($post_id, "billing-city", true).""];
         $billing_postcode = $formdata["".get_post_meta($post_id, "billing-postcode", true).""];
 
-        //$country = $formdata["".get_post_meta($post_id, "country", true).""];
+        $order = wc_get_order( $order_id );
+        //order should be available every time
+        if($order){
+            $order->set_billing_email($email);
+            $order->set_shipping_first_name($shipping_firstname);
+            $order->set_shipping_last_name($shipping_lastname);
+            $order->set_shipping_company($shipping_company);
+            $order->set_shipping_address_1($shipping_address);
+            $order->set_shipping_city($shipping_city);
+            $order->set_shipping_postcode($shipping_postcode);
+            $order->set_shipping_country("DE");
 
-        // Construct a username from the user's name
-        // $username = strtolower(str_replace(' ', '', $name));
-        // $name_parts = explode(' ',$name);
-        if ( !email_exists( $email ) ) 
+            if(empty($different_billing)){
+                $order->set_billing_first_name($shipping_firstname);
+                $order->set_billing_last_name($shipping_lastname);
+                $order->set_billing_company($shipping_company);
+                $order->set_billing_address_1($shipping_address);
+                $order->set_billing_city($shipping_city);
+                $order->set_billing_postcode($shipping_postcode);
+                $order->set_billing_country("DE");
+            }else{
+                $order->set_billing_first_name($billing_firstname);
+                $order->set_billing_last_name($billing_lastname);
+                $order->set_billing_company($billing_company);
+                $order->set_billing_address_1($billing_address);
+                $order->set_billing_city($billing_city);
+                $order->set_billing_postcode($billing_postcode);
+                $order->set_billing_country("DE");
+            }
+
+            $order->save();
+        }
+
+        if ( false && !email_exists( $email ) ) //uncomment because order is used instead of customer
         {
-            // Find an unused username
-            // $username_tocheck = $username;
-            // $i = 1;
-            // while ( username_exists( $username_tocheck ) ) {
-            //     $username_tocheck = $username . $i++;
-            // }
-            // $username = $username_tocheck;
-            // Create the user
             if(!empty($different_billing)){
                 $userdata = array(
                     'user_login' => $email,

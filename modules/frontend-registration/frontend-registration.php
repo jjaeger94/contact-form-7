@@ -37,6 +37,7 @@ function cf7fr_editor_panels_reg ( $panels ) {
 function cf7fr_admin_reg_additional_settings( $cf7 )
 {
 
+	//get attributes required file
 	$my_attributes = get_my_attributes();
 	
 	$post_id = sanitize_text_field($_GET['post']);
@@ -120,6 +121,7 @@ function cf7_save_reg_contact_form( $cf7 ) {
 
 		$my_attributes = get_my_attributes();
 
+		//update post meta for all attributes
 		foreach ($my_attributes as $attr) {
 			if(isset($_POST[$attr])){
 				$vals = sanitize_text_field($_POST[$attr]);
