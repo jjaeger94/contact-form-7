@@ -451,7 +451,7 @@ trait WPCF7_Sendinblue_API {
 				'Content-Type' => 'application/json; charset=utf-8',
 				'API-Key' => $this->get_api_key(),
 			),
-			'body' => json_encode( $properties ),
+			'body' => wp_json_encode( $properties ),
 		);
 
 		$response = wp_remote_post( $endpoint, $request );
@@ -480,7 +480,7 @@ trait WPCF7_Sendinblue_API {
 				'Content-Type' => 'application/json; charset=utf-8',
 				'API-Key' => $this->get_api_key(),
 			),
-			'body' => json_encode( $properties ),
+			'body' => wp_json_encode( $properties ),
 		);
 
 		$response = wp_remote_request( $endpoint, $request );
@@ -506,7 +506,7 @@ trait WPCF7_Sendinblue_API {
 				'Content-Type' => 'application/json; charset=utf-8',
 				'API-Key' => $this->get_api_key(),
 			),
-			'body' => json_encode( $properties ),
+			'body' => wp_json_encode( $properties ),
 		);
 
 		$response = wp_remote_post( $endpoint, $request );
